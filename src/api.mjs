@@ -47,7 +47,7 @@ function init (converter, defaultAttributes) {
       name + '=' + converter.write(value, name) + stringifiedAttributes)
   }
 
-  function get (name) {
+  function get (name, domain = null) {
     if (typeof document === 'undefined' || (arguments.length && !name)) {
       return
     }
@@ -62,10 +62,14 @@ function init (converter, defaultAttributes) {
 
       try {
         var found = decodeURIComponent(parts[0])
-        jar[found] = converter.read(value, found)
+        var theCookie = jar[found] = converter.read(value, found)
 
         if (name === found) {
-          break
+          if (domain && domain !== theCookie.domain) {
+            continue
+          } else {
+            break
+          }
         }
       } catch (e) {}
     }
